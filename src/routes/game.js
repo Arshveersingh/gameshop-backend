@@ -37,6 +37,7 @@ router.get("/games/:slug", async (req, res) => {
         ...req.query,
       },
     });
+    console.log(response.data);
     res.status(response.status).send(response.data);
   } catch (error) {
     res.status(error.response.status).send(error.message);

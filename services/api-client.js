@@ -6,7 +6,7 @@ require("dotenv").config({
 });
 
 const axiosInstance = axios.create({
-  baseURL: process.env.RAWG_API_BASE_URL,
+  baseURL: process.env.RAWG_API_URL,
   params: {
     key: process.env.RAWG_API_KEY,
   },
