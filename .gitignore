@@ -14,4 +14,5 @@ yarn-error.log*
 .env.production.local
 .env.local
 *.env
+
 migrations/

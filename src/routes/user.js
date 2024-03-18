@@ -1,11 +1,12 @@
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
+const validateUserData = require("../middleware/validation");
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.post("/signup", async (req, res) => {
+router.post("/signup", validateUserData, async (req, res) => {
   const existingUser = await prisma.user.findUnique({
     where: {
       email: req.body.email,
@@ -29,7 +30,7 @@ router.post("/signup", async (req, res) => {
   return res.status(409).send("Email already exists in database.");
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", validateUserData, async (req, res) => {
   const existingUser = await prisma.user.findUnique({
     where: {
       email: req.body.email,
