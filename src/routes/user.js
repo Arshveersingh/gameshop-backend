@@ -2,6 +2,7 @@ const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
 const validateUserData = require("../middleware/validation");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -21,7 +22,12 @@ router.post("/signup", validateUserData, async (req, res) => {
         },
       });
       if (user) {
-        return res.status(201).send("User created in database.");
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+          expiresIn: "2h",
+        });
+        return res.status(201).send({
+          token: token,
+        });
       }
     } catch (error) {
       return res.status(500).send("Unexpected error.");
@@ -31,15 +37,20 @@ router.post("/signup", validateUserData, async (req, res) => {
 });
 
 router.post("/login", validateUserData, async (req, res) => {
-  const existingUser = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
       email: req.body.email,
     },
   });
-  if (existingUser) {
+  if (user) {
     try {
-      if (bcrypt.compareSync(req.body.password, existingUser.password)) {
-        return res.status(200).send("Login successful");
+      if (bcrypt.compareSync(req.body.password, user.password)) {
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+          expiresIn: "2h",
+        });
+        return res.status(201).send({
+          token: token,
+        });
       }
       return res.status(400).send("Invalid email or password.");
     } catch (error) {
