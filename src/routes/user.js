@@ -54,7 +54,6 @@ router.post("/login", validateUserData, async (req, res) => {
       }
       return res.status(400).send("Invalid email or password.");
     } catch (error) {
-      console.log("Error creating user:", error);
       return res.status(500).send("Unexpected error occurred.");
     }
   }
