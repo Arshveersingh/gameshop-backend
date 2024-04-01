@@ -37,7 +37,6 @@ router.get("/games/:slug", async (req, res) => {
         ...req.query,
       },
     });
-    console.log(response.data);
     res.status(response.status).send(response.data);
   } catch (error) {
     res.status(error.response.status).send(error.message);
@@ -81,7 +80,7 @@ router.get("/games/:slug/movies", async (req, res) => {
     });
     res.status(response.status).send(response.data);
   } catch (error) {
-    res.status(error.response.status).send(error.message);
+    res.status(error.response?.status).send(error.message);
   }
 });
 router.get("/games/:slug/screenshots", async (req, res) => {

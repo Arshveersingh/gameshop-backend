@@ -18,6 +18,7 @@ router.post("/signup", validateUserData, async (req, res) => {
       const user = await prisma.user.create({
         data: {
           email: req.body.email,
+          username: req.body.username,
           password: getHashedPassword(req.body.password),
         },
       });
@@ -36,10 +37,15 @@ router.post("/signup", validateUserData, async (req, res) => {
   return res.status(409).send("Email already exists in database.");
 });
 
-router.post("/login", validateUserData, async (req, res) => {
+router.post("/login", async (req, res) => {
   const user = await prisma.user.findUnique({
     where: {
-      email: req.body.email,
+      OR: [
+        { email: req.body.emailOrUsername },
+        {
+          user: req.body.emailOrUsername,
+        },
+      ],
     },
   });
   if (user) {

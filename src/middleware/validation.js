@@ -3,6 +3,7 @@ const validateUserData = (req, res, next) => {
   const userSchema = z.object({
     email: z.string().email(),
     password: z.string().min(5),
+    username: z.string().min(3),
   });
   const validationResult = userSchema.safeParse(req.body);
   if (!validationResult.success) {
@@ -10,4 +11,5 @@ const validateUserData = (req, res, next) => {
   }
   next();
 };
+
 module.exports = validateUserData;
