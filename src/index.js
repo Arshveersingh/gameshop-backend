@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const bodyParser = require("body-parser");
 require("dotenv").config({
   path: path.resolve(process.cwd(), "config", ".env"),
 });
@@ -10,7 +11,11 @@ const gamesRouter = require("./routes/games");
 app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(cors({ origin: "http://localhost:5173" }));
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 3000;
 
