@@ -34,23 +34,26 @@ router.post("/signup", validateUserData, async (req, res) => {
       return res.status(500).send("Unexpected error.");
     }
   }
-  return res.status(409).send("Email already exists in database.");
+  return res.status(409).send(
+    JSON.stringify({
+      errors: "Email is invalid or already exist in database.",
+    })
+  );
 });
 
 router.post("/login", async (req, res) => {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findMany({
     where: {
       OR: [
         { email: req.body.emailOrUsername },
-        {
-          user: req.body.emailOrUsername,
-        },
+        { username: req.body.emailOrUsername },
       ],
     },
   });
-  if (user) {
+
+  if (user.length === 1) {
     try {
-      if (bcrypt.compareSync(req.body.password, user.password)) {
+      if (bcrypt.compareSync(req.body.password, user[0].password)) {
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
           expiresIn: "2h",
         });
