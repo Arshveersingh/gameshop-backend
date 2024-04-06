@@ -1,12 +1,18 @@
 const jwt = require("jsonwebtoken");
 
 const authenticateToken = (req, res, next) => {
-  try {
-    jwt.verify(req.body.token, process.env.JWT_SECRET);
-  } catch (error) {
-    return res.status(401).send("Something went wrong. Please try again.");
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader;
+    try {
+      jwt.verify(token, process.env.JWT_SECRET);
+      next();
+      return;
+    } catch (error) {
+      return res.status(403).send("Invalid token");
+    }
   }
-  next();
+  return res.status(401).send("Unauthorized");
 };
 
 module.exports = authenticateToken;
