@@ -70,7 +70,7 @@ router.post("/login", async (req, res) => {
   if (user.length === 1) {
     try {
       if (bcrypt.compareSync(req.body.password, user[0].password)) {
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ userId: user[0].id }, process.env.JWT_SECRET, {
           expiresIn: "2h",
         });
         return res.status(200).send({
@@ -86,6 +86,11 @@ router.post("/login", async (req, res) => {
     .status(400)
     .send("Invalid email format or email exist in database.");
 });
+
+router.get("like_game", authenticateToken, (req, res) => {
+  console.log("Game liked");
+});
+router.get("unlike_game", authenticateToken, (req, res) => {});
 
 const getHashedPassword = (password) => {
   const salt = bcrypt.genSaltSync(12);
