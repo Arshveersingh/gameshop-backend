@@ -8,10 +8,6 @@ const authenticateToken = require("../middleware/jwtAuth");
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.get("/dashboard", authenticateToken, (req, res) => {
-  console.log("Authenticated");
-  res.status(200).send("Authenticated");
-});
 router.post("/signup", validateUserData, async (req, res) => {
   const existingUser = await prisma.user.findUnique({
     where: {
@@ -87,10 +83,68 @@ router.post("/login", async (req, res) => {
     .send("Invalid email format or email exist in database.");
 });
 
-router.get("like_game", authenticateToken, (req, res) => {
-  console.log("Game liked");
+router.get("/liked_games", authenticateToken, async (req, res) => {
+  const userId = parseInt(req.body.userId);
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+  if (user !== null) {
+    return res.status(200).send(user.likedGames);
+  }
+  return res.status(400).send("Cannot get liked games.");
 });
-router.get("unlike_game", authenticateToken, (req, res) => {});
+
+router.put("/like_game/:gameId", authenticateToken, async (req, res) => {
+  const userId = parseInt(req.body.userId);
+  const gameId = parseInt(req.params.gameId);
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+  if (user !== null && !user.likedGames.includes(gameId)) {
+    user.likedGames.push(gameId);
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        likedGames: user.likedGames,
+      },
+    });
+    if (updatedUser !== null) {
+      return res.status(200).send("Successfully liked game.");
+    }
+  }
+  return res.status(400).send("Error liking game.");
+});
+router.put("/unlike_game/:gameId", authenticateToken, async (req, res) => {
+  const userId = parseInt(req.body.userId);
+  const gameId = parseInt(req.params.gameId);
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+  if (user !== null && user.likedGames.includes(gameId)) {
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        likedGames: {
+          set: user.likedGames.filter((id) => id !== gameId),
+        },
+      },
+    });
+    if (updatedUser !== null) {
+      return res.status(200).send("Game unliked.");
+    }
+  }
+  return res.status(400).send("Error unliking game.");
+});
 
 const getHashedPassword = (password) => {
   const salt = bcrypt.genSaltSync(12);

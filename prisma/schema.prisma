@@ -14,9 +14,9 @@ datasource db {
 }
 
 model User {
-  id          Int    @id @default(autoincrement())
-  email       String @unique
-  username    String @unique
-  password    String
-  liked_games Int[]  @unique // Stores game ids
+  id         Int    @id @default(autoincrement())
+  email      String @unique
+  username   String @unique
+  password   String
+  likedGames Int[]  @unique // Stores game ids
 }

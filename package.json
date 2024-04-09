@@ -11,10 +11,10 @@
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^3.1.0",
-    "prisma": "^5.11.0"
+    "prisma": "^5.12.1"
   },
   "dependencies": {
-    "@prisma/client": "^5.11.0",
+    "@prisma/client": "^5.12.1",
     "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
