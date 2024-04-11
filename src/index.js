@@ -12,7 +12,7 @@ app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors({ origin: "https://gamestop-three.vercel.app/" }));
+app.use(cors({ origin: "https://gamestop-three.vercel.app" }));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
